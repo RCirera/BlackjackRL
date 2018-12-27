@@ -207,5 +207,3 @@ class BlackjackLearner:
         print("Percentage of Ties: %.2f" % (player_ties/episodes * 100))
         print("Percentage of Losses: %.2f" % (player_losses/episodes * 100))
         return [player_wins, player_ties, player_losses]
-
-
