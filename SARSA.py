@@ -21,11 +21,12 @@
 
 from definitions import *
 
+
 # Set constants
-alpha = 0.5  # step size
+alpha = 0.1  # step size
 epsilon = 0.7  # e-greedy policy term
 gamma = 0.0  # discount rate
-episodes = 1000000  # number of episodes to run
+episodes = 100000  # number of episodes to run
 
 # Initialize the learner
 learner = BlackjackLearner()
@@ -45,7 +46,7 @@ for episode in range(1, episodes):
         state = game.state()
 
         # Choose action from e-greedy
-        action = learner.e_greedy_action(state)
+        action = learner.e_greedy_action(state, epsilon)
         # print(action)
 
         # Get state-action value
@@ -61,7 +62,7 @@ for episode in range(1, episodes):
         # print(new_state)
 
         # Get new action
-        new_action = learner.e_greedy_action(new_state)
+        new_action = learner.e_greedy_action(new_state, epsilon)
         # print(new_action)
 
         # Get new state-action value
@@ -74,8 +75,20 @@ for episode in range(1, episodes):
         learner.set_value(state, action, updated_state_action_value)
 
         # Display training updates
-        if episode % int(episodes/1000) == 0:
+        if episode % 10000 == 0:
             print("%.2f of training complete." % (episode / episodes * 100))
+            learner.save("./Saved Learners/SARSA.p")
+            # learner.test(10000)
+
+# Save the learner
+learner.save("./Saved Learners/SARSA.p")
 
 # Test the learned optimal policy
-learner.test(100000)
+learner.test(10000)
+
+learner2 = BlackjackLearner()
+learner2.load("./Saved Learners/SARSA.p")
+
+learner2.test(100000)
+
+

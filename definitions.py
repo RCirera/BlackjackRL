@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import warnings
+import pickle
 
 
 class Card:
@@ -147,12 +148,21 @@ class BlackjackLearner:
 
     def __init__(self, dims=(32, 32, 2, 2)):
         self.q_table = np.zeros(dims, dtype=float)
+        return
+
+    def save(self, filename):
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+        return
+
+    def load(self, filename):
+        with open(filename, 'rb') as f:
+            learner = pickle.load(f)
+            self.q_table = learner.q_table
+        return
 
     def set_value(self, state, action, value):
-        # print(self.q_table[state[0], state[1], state[2], action])
         self.q_table[state[0], state[1], state[2], action] = value
-        # print(value)
-        # print(self.q_table[state[0], state[1], state[2], action])
         return
 
     def get_value(self, state, action):
