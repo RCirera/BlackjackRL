@@ -1,4 +1,4 @@
-# SARSA Algorithm:
+# Q-Learning Algorithm:
 #
 # 1. Set constants:
 #     - alpha: step size
@@ -13,7 +13,7 @@
 #     3. Loop for each state of the episode. While state S is not terminal:
 #         1. Take action A
 #         2. Observe reward R and new state S'
-#         3. Choose A' from S' using a policy derived from Q, e.g. e-greedy
+#         3. Choose A' from S' to maximize Q(S',A')
 #         4. Update Q(S,A)=Q(S,A)+alpha[R+gamma*Q(S',A')-Q(S,A)]
 #         5. Update the current state S=S'
 #         6. Update the current action A=A'
@@ -26,7 +26,7 @@ from definitions import *
 alpha = 0.1  # step size
 epsilon = 0.7  # e-greedy policy term
 gamma = 0.0  # discount rate
-episodes = 10000  # number of episodes to run
+episodes = 10000000  # number of episodes to run
 
 # Initialize the learner
 learner = BlackjackLearner()
@@ -40,14 +40,14 @@ for episode in range(1, episodes):
     # New episode
     game.new_game()
 
-    # Get the state
-    state = game.state()
-
-    # Choose action from e-greedy
-    action = learner.e_greedy_action(state, epsilon)
-    # print(action)
-
     while not game.game_over:
+
+        # Get the state
+        state = game.state()
+
+        # Choose action from e-greedy
+        action = learner.e_greedy_action(state, epsilon)
+        # print(action)
 
         # Get state-action value
         state_action_value = learner.get_value(state, action)
@@ -62,7 +62,7 @@ for episode in range(1, episodes):
         # print(new_state)
 
         # Get new action
-        new_action = learner.e_greedy_action(new_state, epsilon)
+        new_action = learner.greedy_action(new_state)
         # print(new_action)
 
         # Get new state-action value
@@ -74,18 +74,14 @@ for episode in range(1, episodes):
                                      + alpha * (reward + gamma * new_state_action_value - state_action_value)
         learner.set_value(state, action, updated_state_action_value)
 
-        # Update state and action
-        state = new_state
-        action = new_action
-
         # Display training updates
         if episode % 10000 == 0:
             print("%.2f of training complete." % (episode / episodes * 100))
-            learner.save("./Saved Learners/SARSA.p")
+            learner.save("./Saved Learners/Q_Learning.p")
             # learner.test(10000)
 
 # Save the learner
-learner.save("./Saved Learners/SARSA.p")
+learner.save("./Saved Learners/Q_Learning.p")
 
 # Test the learned optimal policy
-learner.test(1000)
+learner.test(10000)
