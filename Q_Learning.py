@@ -25,8 +25,9 @@ from definitions import *
 # Set constants
 alpha = 0.1  # step size
 epsilon = 0.7  # e-greedy policy term
-gamma = 0.0  # discount rate
-episodes = 10000000  # number of episodes to run
+gamma = 0.1  # discount rate
+episodes = 100000  # number of episodes to run
+test_episodes = 100000 # number of test episodes to run after training
 
 # Initialize the learner
 learner = BlackjackLearner()
@@ -84,4 +85,4 @@ for episode in range(1, episodes):
 learner.save("./Saved Learners/Q_Learning.p")
 
 # Test the learned optimal policy
-learner.test(10000)
+learner.test(test_episodes)

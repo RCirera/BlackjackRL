@@ -58,6 +58,9 @@ class Hand:
         else:
             return 0
 
+    def check_blackjack(self):
+        return True if self.count() == 21 and self.__len__() == 2 else False
+
 
 class BlackjackGame:
 
@@ -190,9 +193,7 @@ class BlackjackLearner:
             return self.random_action(state)
 
     def test(self, episodes):
-        player_wins = 0
-        player_ties = 0
-        player_losses = 0
+        returns = 0.0
 
         for episode in range(1, episodes):
             game = BlackjackGame()
@@ -204,16 +205,10 @@ class BlackjackLearner:
                 reward = game.act(action)
 
                 if game.game_over:
-                    if reward == 1:
-                        player_wins += 1
-                    elif reward == 0:
-                        player_ties += 1
-                    elif reward == -1:
-                        player_losses += 1
+                    if reward == 1 and game.player_hand.check_blackjack():
+                        returns += 1.5
                     else:
-                        warnings.warn("No reward received at game over.")
+                        returns += reward
 
-        print("Percentage of Wins: %.2f" % (player_wins/episodes * 100))
-        print("Percentage of Ties: %.2f" % (player_ties/episodes * 100))
-        print("Percentage of Losses: %.2f" % (player_losses/episodes * 100))
-        return [player_wins, player_ties, player_losses]
+        print("Return percentage: %.2f%%" % (returns/episodes * 100))
+        return returns
