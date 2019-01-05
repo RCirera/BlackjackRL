@@ -27,7 +27,7 @@ alpha = 0.1  # step size
 epsilon = 0.7  # e-greedy policy term
 gamma = 0.1  # discount rate
 episodes = 100000  # number of episodes to run
-test_episodes = 100000 # number of test episodes to run after training
+test_episodes = 100000  # number of test episodes to run after training
 
 # Initialize the learner
 learner = BlackjackLearner()
@@ -48,27 +48,21 @@ for episode in range(1, episodes):
 
         # Choose action from e-greedy
         action = learner.e_greedy_action(state, epsilon)
-        # print(action)
 
         # Get state-action value
         state_action_value = learner.get_value(state, action)
-        # print(state_action_value)
 
         # Take action and get reward
         reward = game.act(action)
-        # print(reward)
 
         # Get new state
         new_state = game.state()
-        # print(new_state)
 
         # Get new action
         new_action = learner.greedy_action(new_state)
-        # print(new_action)
 
         # Get new state-action value
         new_state_action_value = learner.get_value(new_state, new_action)
-        # print(new_state_action_value)
 
         # Update the state-action value table
         updated_state_action_value = state_action_value \
