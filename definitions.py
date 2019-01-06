@@ -269,16 +269,13 @@ class QNetworkLearner:
         for episode in range(1, episodes + 1):
             game = BlackjackGame()
             game.new_game()
-            print("New Game")
-            print(game.state())
+
             while not game.game_over:
                 state = game.state()
                 action = self.greedy_action(state)
-                print(action)
                 reward = game.act(action)
 
                 if game.game_over:
-                    print(game.state())
                     if reward == 1 and game.player_hand.check_blackjack():
                         returns += 1.5
                     else:
