@@ -1,6 +1,9 @@
 import random
 import numpy as np
 import pickle
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 
 class Card:
@@ -150,7 +153,6 @@ class BlackjackLearner:
 
     def __init__(self, dims=(32, 32, 2, 2)):
         self.q_table = np.zeros(dims, dtype=float)
-        return
 
     def save(self, filename):
         with open(filename, 'wb') as f:
@@ -210,4 +212,77 @@ class BlackjackLearner:
                         returns += reward
 
         print("Return percentage: %.2f%%" % (returns/episodes * 100))
+        return returns
+
+
+class QNetwork(nn.Module):
+
+    def __init__(self, input_dim=1, output_dim=1, n=100):
+        super(QNetwork, self).__init__()
+        self.linear1 = nn.Linear(input_dim, n)
+        self.sigmoid1 = nn.Sigmoid()
+        self.linear2 = nn.Linear(n, output_dim)
+
+    def forward(self, x):
+        return self.linear2(self.sigmoid1(self.linear1(x)))
+
+
+class QNetworkLearner:
+
+    def __init__(self, states=1, actions=1, neurons=100, device=torch.device('cpu')):
+        self.device = device
+        self.network = QNetwork(states, actions, neurons).to(device)
+        self.action_space = range(actions)
+
+    def save(self, filename):
+        return
+
+    def load(self, filename):
+        return
+
+    def get_value(self, state, action):
+        print(state)
+        tensor = torch.Tensor(state).to(self.device)
+        print(tensor)
+        values = self.network(torch.Tensor(state).to(self.device))
+        print(values)
+        value = self.network(torch.Tensor(state).to(self.device)).data.cpu().numpy()[action]
+        print(value)
+        return self.network(torch.Tensor(state).to(self.device)).data.cpu().numpy()[action]
+
+    def greedy_action(self, state):
+        values = self.network(torch.Tensor(state).to(self.device)).data.cpu().numpy()
+        return np.random.choice(np.where(values == max(values))[0])
+
+    def random_action(self):
+        return np.random.choice(self.action_space)
+
+    def e_greedy_action(self, state, e=0.5):
+        if np.random.ranf() < 1-e:
+            return self.greedy_action(state)
+        else:
+            return self.random_action()
+
+    def test(self, episodes):
+        returns = 0.0
+
+        for episode in range(1, episodes + 1):
+            game = BlackjackGame()
+            game.new_game()
+            print("New Game")
+            print(game.state())
+            while not game.game_over:
+                state = game.state()
+                action = self.greedy_action(state)
+                print(action)
+                reward = game.act(action)
+
+                if game.game_over:
+                    print(game.state())
+                    if reward == 1 and game.player_hand.check_blackjack():
+                        returns += 1.5
+                    else:
+                        returns += reward
+
+        print("Return percentage: %.2f%%" % (returns / episodes * 100))
         return returns
