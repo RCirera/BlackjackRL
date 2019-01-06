@@ -1,6 +1,5 @@
 import random
 import numpy as np
-import warnings
 import pickle
 
 
@@ -195,7 +194,7 @@ class BlackjackLearner:
     def test(self, episodes):
         returns = 0.0
 
-        for episode in range(1, episodes):
+        for episode in range(1, episodes+1):
             game = BlackjackGame()
             game.new_game()
 

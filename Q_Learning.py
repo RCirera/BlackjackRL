@@ -26,7 +26,7 @@ from definitions import *
 alpha = 0.1  # step size
 epsilon = 0.7  # e-greedy policy term
 gamma = 0.1  # discount rate
-episodes = 100000  # number of episodes to run
+episodes = 1000000  # number of episodes to run
 test_episodes = 100000  # number of test episodes to run after training
 
 # Initialize the learner
@@ -73,7 +73,7 @@ for episode in range(1, episodes):
         if episode % 10000 == 0:
             print("%.2f of training complete." % (episode / episodes * 100))
             learner.save("./Saved Learners/Q_Learning.p")
-            # learner.test(10000)
+            # learner.test(1000)
 
 # Save the learner
 learner.save("./Saved Learners/Q_Learning.p")
